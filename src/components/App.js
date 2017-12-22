@@ -1,10 +1,11 @@
+// @flow
 import React, { Component } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import * as actions from "../actions";
 import { Container } from "semantic-ui-react";
 
-import Landing from "./Landing";
+import Home from "./Home";
 import Login from "./Login";
 import Header from "./Header";
 import Learn from "./Learn";
@@ -13,7 +14,9 @@ import Profile from "./Profile";
 import Signup from "./Signup";
 import RequireAuthentication from "./Wrappers/RequireAuthentication";
 
-class App extends Component {
+type Props = {};
+
+class App extends Component<Props> {
     componentDidMount() {}
 
     render() {
@@ -22,7 +25,7 @@ class App extends Component {
                 <BrowserRouter>
                     <div>
                         <Header />
-                        <Route path="/" exact component={Landing} />
+                        <Route path="/" exact component={Home} />
                         <Route path="/play" component={Play} />
                         <Route path="/learn" component={Learn} />
                         <Route
