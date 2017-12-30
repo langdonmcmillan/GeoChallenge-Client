@@ -6,7 +6,7 @@ import reduxThunk from "redux-thunk";
 import "semantic-ui-css/semantic.min.css";
 
 import App from "./components/App";
-import reducers from "./reducers";
+import { default as reducers, StoreState, DefaultState } from "./reducers";
 import { fetchUser } from "./actions/authentication";
 import { AUTHENTICATE_USER } from "./actions/types";
 
@@ -18,9 +18,9 @@ declare global {
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(
+const store = createStore<StoreState>(
     reducers,
-    {},
+    DefaultState,
     composeEnhancers(applyMiddleware(reduxThunk))
 );
 

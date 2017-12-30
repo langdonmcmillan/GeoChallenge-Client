@@ -7,7 +7,7 @@ export interface AuthenticationState {
     user: User;
 }
 
-const defaultUser: User = {
+export const defaultUser: User = {
     userName: "Guest",
     email: "",
     _id: ""
@@ -15,13 +15,13 @@ const defaultUser: User = {
 
 type AuthenticationAction = actions.Login | actions.Logout | actions.Signup;
 
-const defaultState: AuthenticationState = {
+export const DefaultAuthenticationState: AuthenticationState = {
     authenticated: false,
     user: defaultUser
 };
 
 export default function(
-    state: AuthenticationState = defaultState,
+    state: AuthenticationState = DefaultAuthenticationState,
     action: AuthenticationAction
 ) {
     console.log("action", action);
