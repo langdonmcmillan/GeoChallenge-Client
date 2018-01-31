@@ -1,31 +1,18 @@
 import * as types from "../../actions/types";
 import * as actions from "../../actions/authentication";
-import User from "../../models/user";
-
-export interface AuthenticationState {
-    authenticated: boolean;
-    user: User;
-}
-
-export const defaultUser: User = {
-    userName: "Guest",
-    email: "",
-    _id: ""
-};
+import Authentication from "../../models/authentication";
 
 type AuthenticationAction = actions.Login | actions.Logout | actions.Signup;
 
-export const DefaultAuthenticationState: AuthenticationState = {
+export const DefaultAuthenticationState: Authentication = {
     authenticated: false,
-    user: defaultUser
+    user: { userName: "Guest" }
 };
 
 export default function(
-    state: AuthenticationState = DefaultAuthenticationState,
+    state: Authentication = DefaultAuthenticationState,
     action: AuthenticationAction
 ) {
-    console.log("action", action);
-
     switch (action.type) {
         case types.AUTHENTICATE_USER:
             return {
@@ -34,7 +21,7 @@ export default function(
                 user: action.payload
             };
         case types.UNAUTHENTICATE_USER:
-            return { ...state, authenticated: false, user: defaultUser };
+            return DefaultAuthenticationState;
         default:
             return state;
     }
