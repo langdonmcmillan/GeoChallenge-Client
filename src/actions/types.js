@@ -1,2 +1,4 @@
-export const AUTHENTICATE_USER = "authenticate_user";
-export const UNAUTHENTICATE_USER = "unauthenticate_user";
+export const LOGIN_USER = "LOGIN_USER";
+export const LOGOUT_USER = "LOGOUT_USER";
+
+export const SET_ERROR = "SET_ERROR";

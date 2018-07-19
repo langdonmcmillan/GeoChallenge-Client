@@ -3,13 +3,14 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 
-export default function(ComposedComponent) {
+export default function(ComposedComponent, continueTo) {
+    console.log("continue to auth", continueTo);
     class Authentication extends Component {
         render() {
             return this.props.authenticated ? (
                 <ComposedComponent {...this.props} />
             ) : (
-                <Redirect to="/" />
+                <Redirect to={{ pathname: "/login", from: continueTo }} />
             );
         }
     }

@@ -13,6 +13,7 @@ class Header extends Component {
     };
 
     render() {
+        const { authenticated, user } = this.props.authentication;
         return (
             <Menu inverted>
                 <Menu.Item as={Link} to="/" exact header name="home">
@@ -24,13 +25,13 @@ class Header extends Component {
                 <Menu.Item as={Link} to="/learn" name="learn">
                     Learn
                 </Menu.Item>
-                {this.props.authenticated && (
+                {authenticated && (
                     <Menu.Item as={Link} to="/profile" name="profile">
-                        {this.props.userName}
+                        {user.name}
                     </Menu.Item>
                 )}
                 <Menu.Menu position="right">
-                    {this.props.authenticated ? (
+                    {authenticated ? (
                         <LogOutButton handleClick={this.callLogout} />
                     ) : (
                         <LogInButton />
@@ -41,13 +42,15 @@ class Header extends Component {
     }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = state => {
     return {
-        authenticated: state.authentication.authenticated,
-        user: state.authentication.user
+        authentication: state.authentication
     };
-}
+};
 
 const mapDispatchToProps = dispatch => bindActionCreators({ logout }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Header);

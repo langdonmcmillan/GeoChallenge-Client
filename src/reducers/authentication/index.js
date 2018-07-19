@@ -1,24 +1,22 @@
-import * as types from "../../actions/types";
+import { LOGIN_USER, LOGOUT_USER } from "../../actions/types";
 
 const defaultState = {
     authenticated: false,
-    user: {
-        userName: "Guest",
-        email: "",
-        _id: ""
-    }
+    user: undefined
 };
 
 export default function(state = defaultState, action) {
     switch (action.type) {
-        case types.AUTHENTICATE_USER:
+        case LOGIN_USER:
             return {
-                ...state,
                 authenticated: true,
-                user: action.payload
+                user: action.user
             };
-        case types.UNAUTHENTICATE_USER:
-            return { ...state, authenticated: false, user: null };
+        case LOGOUT_USER:
+            return {
+                authenticated: false,
+                user: null
+            };
         default:
             return state;
     }

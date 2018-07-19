@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import { Field, reduxForm } from "redux-form";
-import type { FormProps } from "redux-form";
 import {
     Button,
     Form,
@@ -13,27 +11,27 @@ import {
     Message
 } from "semantic-ui-react";
 import { required, email, length, confirmation } from "redux-form-validators";
+import { Redirect } from "react-router-dom";
 
 import { signup } from "../../actions/authentication";
-import { StyledInput } from "../../components/Shared/StyledInput";
+import StyledInput from "../../components/Shared/StyledInput";
+import { SIGNUP_ERROR } from "../../actions/error/errorTypes";
 
 class Signup extends Component {
-    state = {
-        errorMessage: null
+    handleFormSubmit = ({ name, email, password }) => {
+        this.props.signup(name, email, password);
     };
-    handleFormSubmit = async ({ userName, email, password }) => {
-        const response = await this.props.signup(userName, email, password);
-        if (response.success) this.props.history.push("/");
-        this.setState({ errorMessage: response.message });
-    };
+
     displayErrorMessage = () => {
-        if (this.state.errorMessage)
-            return <Message error content={this.state.errorMessage} />;
+        if (this.props.error.errorType === SIGNUP_ERROR)
+            return <Message error content={this.props.error.message} />;
 
         return "";
     };
+
     render() {
-        const { handleSubmit, pristine, submitting } = this.props;
+        const { handleSubmit, pristine, submitting, location } = this.props;
+        if (this.props.user) return <Redirect to={`/${location.from || ""}`} />;
         return (
             <Grid
                 textAlign="center"
@@ -42,14 +40,14 @@ class Signup extends Component {
             >
                 <Grid.Column style={{ maxWidth: 450 }}>
                     <Header as="h2" color="blue" textAlign="center">
-                        Create an Account
+                        Create a Profile
                     </Header>
                     <Form error size="large">
                         <Segment stacked>
                             {this.displayErrorMessage()}
                             <Form.Field>
                                 <Field
-                                    name="userName"
+                                    name="name"
                                     component={StyledInput}
                                     type="text"
                                     placeholder="User Name"
@@ -79,7 +77,7 @@ class Signup extends Component {
                                         email({ msg: "Invalid email." }),
                                         length({
                                             max: 100,
-                                            msg: "Maximum 100 characters."
+                                            msg: "Maximum 254 characters."
                                         })
                                     ]}
                                 />
@@ -96,8 +94,8 @@ class Signup extends Component {
                                             msg: "Password is required."
                                         }),
                                         length({
-                                            max: 100,
-                                            msg: "Maximum 100 characters."
+                                            max: 15,
+                                            msg: "Maximum 15 characters."
                                         })
                                     ]}
                                 />
@@ -134,9 +132,16 @@ class Signup extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return { user: state.authentication.user, error: state.error };
+};
+
 const mapDispatchToProps = dispatch => bindActionCreators({ signup }, dispatch);
 
-const ConnectedSignup = connect(null, mapDispatchToProps)(Signup);
+const ConnectedSignup = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Signup);
 
 export default reduxForm({
     form: "signup"

@@ -1,55 +1,58 @@
-// @flow
 import axios from "axios";
 
-import * as types from "../types";
+import { LOGIN_USER, LOGOUT_USER } from "../types";
+import { LOGIN_ERROR, SIGNUP_ERROR } from "../error/errorTypes";
+import { setError } from "../error/index";
 
-export const login = (userName, password) => async dispatch => {
+export const login = (name, password) => async dispatch => {
     try {
+        const user = { name, email: name, password };
         const response = await axios({
             method: "POST",
             url: "/api/login",
-            data: JSON.stringify({ userName, password }),
+            data: JSON.stringify({ user }),
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             }
         });
-        localStorage.setItem("geochallenge-token", response.data.token);
-        dispatch({
-            type: types.AUTHENTICATE_USER,
-            payload: response.data.user
-        });
-        return { success: true };
+        setUserInformation(response.data, dispatch);
     } catch (error) {
-        return { success: false, message: error.response.data.message };
+        setError(LOGIN_ERROR, error.response.data.message);
     }
 };
 
-export const signup = (userName, email, password) => async dispatch => {
+export const signup = (name, email, password, isGuest) => async dispatch => {
     try {
+        const user = { name, email, password, isGuest };
         const response = await axios({
             method: "POST",
-            url: "/api/signup",
-            data: JSON.stringify({ userName, email, password }),
+            url: "/api/user",
+            data: JSON.stringify({ user }),
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             }
         });
-        localStorage.setItem("geochallenge-token", response.data.token);
-        dispatch({
-            type: types.AUTHENTICATE_USER,
-            payload: response.data.user
-        });
-        return { success: true };
+
+        setUserInformation(response.data, dispatch);
     } catch (error) {
-        return { success: false, message: error.response.data.message };
+        setError(SIGNUP_ERROR, error.response.data.message);
     }
+};
+
+const setUserInformation = (data, dispatch) => {
+    const { token, user } = data;
+    localStorage.setItem("geochallenge-token", token);
+    dispatch({
+        type: LOGIN_USER,
+        user
+    });
 };
 
 export const logout = () => dispatch => {
     localStorage.removeItem("geochallenge-token");
-    return dispatch({ type: types.UNAUTHENTICATE_USER });
+    dispatch({ type: LOGOUT_USER });
 };
 
 export const fetchUser = async token => {
@@ -65,6 +68,6 @@ export const fetchUser = async token => {
         });
         return response.data;
     } catch (error) {
-        return null;
+        return undefined;
     }
 };

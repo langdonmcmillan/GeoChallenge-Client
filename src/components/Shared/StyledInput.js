@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Message } from "semantic-ui-react";
 
-export const StyledInput = props => {
+const StyledInput = props => {
     return (
         <div>
             <Form.Input
@@ -25,3 +25,5 @@ export const StyledInput = props => {
         </div>
     );
 };
+
+export default StyledInput;

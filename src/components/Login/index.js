@@ -3,37 +3,41 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Field, reduxForm } from "redux-form";
-import type { FormProps } from "redux-form";
+import { Redirect } from "react-router-dom";
 import {
     Button,
     Form,
     Grid,
     Header,
     Segment,
-    Message
+    Message,
+    Divider
 } from "semantic-ui-react";
 import { required } from "redux-form-validators";
 
-import { login } from "../../actions/authentication";
-import { StyledInput } from "../../components/Shared/StyledInput";
+import { login, signup } from "../../actions/authentication";
+import StyledInput from "../../components/Shared/StyledInput";
+import { LOGIN_ERROR } from "../../actions/error/errorTypes";
 
 class Login extends Component {
     state = {
         errorMessage: null
     };
-    handleFormSubmit = async ({ userName, password }) => {
-        const response = await this.props.login(userName, password);
-        if (response.success) this.props.history.push("/");
-        this.setState({ errorMessage: response.message });
+    handleFormSubmit = async ({ name, password }) => {
+        this.props.login(name, password);
+    };
+    handleGuestLogin = async () => {
+        this.props.signup(undefined, undefined, undefined, true);
     };
     displayErrorMessage = () => {
-        if (this.state.errorMessage)
-            return <Message error content={this.state.errorMessage} />;
+        if (this.props.error.errorType === LOGIN_ERROR)
+            return <Message error content={this.props.error.message} />;
 
         return "";
     };
     render() {
-        const { handleSubmit, pristine, submitting } = this.props;
+        const { handleSubmit, pristine, submitting, location } = this.props;
+        if (this.props.user) return <Redirect to={`/${location.from || ""}`} />;
         return (
             <Grid
                 textAlign="center"
@@ -49,7 +53,7 @@ class Login extends Component {
                             {this.displayErrorMessage()}
                             <Form.Field>
                                 <Field
-                                    name="userName"
+                                    name="name"
                                     component={StyledInput}
                                     type="text"
                                     placeholder="User Name/Email"
@@ -86,12 +90,24 @@ class Login extends Component {
                             </Button>
                         </Segment>
                     </Form>
+                    <Header as="h2" color="blue" textAlign="center">
+                        No Account?
+                    </Header>
                     <Segment>
-                        <Link to="/signup">
-                            <Button fluid size="large">
+                        <Link to={{ pathname: "/signup", from: location.from }}>
+                            <Button primary fluid size="large">
                                 Sign Up
                             </Button>
                         </Link>
+                        <Divider horizontal>Or</Divider>
+                        <Button
+                            secondary
+                            fluid
+                            size="large"
+                            onClick={this.handleGuestLogin}
+                        >
+                            Continue as a Guest
+                        </Button>
                     </Segment>
                 </Grid.Column>
             </Grid>
@@ -99,9 +115,17 @@ class Login extends Component {
     }
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({ login }, dispatch);
+const mapStateToProps = state => {
+    return { user: state.authentication.user, error: state.error };
+};
 
-const ConnectedLogin = connect(null, mapDispatchToProps)(Login);
+const mapDispatchToProps = dispatch =>
+    bindActionCreators({ login, signup }, dispatch);
+
+const ConnectedLogin = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Login);
 
 export default reduxForm({
     form: "login"

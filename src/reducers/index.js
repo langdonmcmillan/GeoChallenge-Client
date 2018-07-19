@@ -1,9 +1,11 @@
-// @flow
 import { combineReducers } from "redux";
-import authenticationReducer from "./authentication";
 import { reducer as formReducer } from "redux-form";
+
+import authenticationReducer from "./authentication";
+import errorReducer from "./shared/error";
 
 export default combineReducers({
     form: formReducer,
-    authentication: authenticationReducer
+    authentication: authenticationReducer,
+    error: errorReducer
 });
