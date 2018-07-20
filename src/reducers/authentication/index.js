@@ -5,7 +5,7 @@ const defaultState = {
     user: undefined
 };
 
-export default function(state = defaultState, action) {
+export default (state = defaultState, action) => {
     switch (action.type) {
         case LOGIN_USER:
             return {
@@ -20,4 +20,4 @@ export default function(state = defaultState, action) {
         default:
             return state;
     }
-}
+};

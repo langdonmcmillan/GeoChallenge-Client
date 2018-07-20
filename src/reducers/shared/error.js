@@ -5,7 +5,7 @@ const defaultState = {
     message: undefined
 };
 
-export default function(state = defaultState, action) {
+export default (state = defaultState, action) => {
     switch (action.type) {
         case SET_ERROR:
             const { errorType, message } = action;
@@ -16,4 +16,4 @@ export default function(state = defaultState, action) {
         default:
             return state;
     }
-}
+};
